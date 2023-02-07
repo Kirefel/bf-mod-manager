@@ -3,7 +3,7 @@
     <q-card-section class="row items-center q-pb-none">
       <div class="text-h6">Settings</div>
       <q-space />
-      <!-- <q-btn icon="close" flat round dense v-close-popup /> -->
+      <q-btn icon="close" flat round dense v-close-popup />
     </q-card-section>
 
     <q-card-section>
@@ -11,7 +11,7 @@
 
       <q-input v-model="gamePath" label="Game path" spellcheck="false">
         <template v-slot:append>
-          <q-btn flat>...</q-btn>
+          <q-btn flat @click="browseFile">...</q-btn>
         </template>
       </q-input>
       <q-checkbox v-model="debugMode" label="Debug mode" />
@@ -20,6 +20,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'settings-card',
   
@@ -35,6 +36,22 @@ export default {
     gamePath: {
       get() { return this.$store.state.settings.gamePath },
       set(value) { this.$store.commit('setSetting', { settingName: 'gamePath', value }) }
+    }
+  },
+
+  mounted() {
+    window.ipc.on('OPEN_FILE_DIALOG', payload => {
+      console.log(payload)
+      if (payload.canceled || payload.filePaths === undefined || payload.filePaths.length === 0)
+        return;
+      
+      this.gamePath = payload.filePaths[0];
+    })
+  },
+
+  methods: {
+    browseFile() {
+      window.ipc.send('OPEN_FILE_DIALOG')
     }
   }
 }
