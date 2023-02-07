@@ -19,7 +19,7 @@ if (process.contextIsolated) {
   window.api = api
 }
 
-const validChannels = ['OPEN_FILE_DIALOG'];
+const validChannels = [ 'OPEN_FILE_DIALOG' ];
 contextBridge.exposeInMainWorld(
   'ipc', {
     send: (channel, data) => {

@@ -10,7 +10,7 @@
     <q-item-section side>
       <q-btn-group flat>
         <q-btn icon="file_download" title="Download" />
-        <q-btn icon="launch" title="View in Browser" />
+        <q-btn icon="launch" title="View in Browser" href="https://github.com" target="_blank" />
       </q-btn-group>
     </q-item-section>
   </q-item>
