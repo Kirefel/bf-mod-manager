@@ -5,13 +5,12 @@ export default createStore({
     settings: {
       steam: false,
       gamePath: "",
-      debugMode: false
+      modsPath: "",
+      debugMode: false,
+      modsSource: ""
     }
   },
   mutations: {
-    increment (state) {
-      state.count++
-    },
     setSetting(state, { settingName, value }) {
       state.settings[settingName] = value
     }

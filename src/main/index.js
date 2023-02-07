@@ -79,3 +79,9 @@ ipcMain.on('OPEN_FILE_DIALOG', event => {
     event.reply('OPEN_FILE_DIALOG', { ...x });
   })
 });
+
+ipcMain.on('OPEN_FOLDER_DIALOG', event => {
+  dialog.showOpenDialog({ properties: ['openDirectory']}).then(x => {
+    event.reply('OPEN_FOLDER_DIALOG', { ...x });
+  })
+});

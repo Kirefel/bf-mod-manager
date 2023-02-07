@@ -1,5 +1,5 @@
 <template>
-  <q-card style="width: 700px; max-width: 80vw">
+  <q-card class="dialog">
     <q-card-section class="row items-center q-pb-none">
       <div class="text-h6">Settings</div>
       <q-space />
@@ -14,6 +14,12 @@
           <q-btn flat @click="browseFile">...</q-btn>
         </template>
       </q-input>
+      <q-input v-model="modsPath" label="Mods Directory" spellcheck="false">
+        <template v-slot:append>
+          <q-btn flat @click="browseFolder">...</q-btn>
+        </template>
+      </q-input>
+      <q-input v-model="modsSource" label="Mods Source" spellcheck="false" />
       <q-checkbox v-model="debugMode" label="Debug mode" />
     </q-card-section>
   </q-card>
@@ -36,26 +42,47 @@ export default {
     gamePath: {
       get() { return this.$store.state.settings.gamePath },
       set(value) { this.$store.commit('setSetting', { settingName: 'gamePath', value }) }
+    },
+    modsPath: {
+      get() { return this.$store.state.settings.modsPath },
+      set(value) { this.$store.commit('setSetting', { settingName: 'modsPath', value }) }
+    },
+    modsSource: {
+      get() { return this.$store.state.settings.modsSource },
+      set(value) { this.$store.commit('setSetting', { settingName: 'modsSource', value }) }
     }
   },
 
   mounted() {
     window.ipc.on('OPEN_FILE_DIALOG', payload => {
-      console.log(payload)
       if (payload.canceled || payload.filePaths === undefined || payload.filePaths.length === 0)
         return;
       
       this.gamePath = payload.filePaths[0];
+    }),
+    window.ipc.on('OPEN_FOLDER_DIALOG', payload => {
+      if (payload.canceled || payload.filePaths === undefined || payload.filePaths.length === 0)
+        return;
+      
+      this.modsPath = payload.filePaths[0];
     })
   },
 
   methods: {
     browseFile() {
       window.ipc.send('OPEN_FILE_DIALOG')
+    },
+    browseFolder() {
+      window.ipc.send('OPEN_FOLDER_DIALOG')
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
+.dialog {
+  padding: 10px;
+  width: 700px;
+  max-width: 80vw;
+}
 </style>

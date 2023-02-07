@@ -1,7 +1,7 @@
 <template>
   <q-item>
     <q-item-section side top>
-      <q-checkbox :disable="required" v-model="enabled" />
+      <q-checkbox :disable="required" :model-value="false" />
     </q-item-section>
     <q-item-section>
       <q-item-label>{{ modTitle }}</q-item-label>
