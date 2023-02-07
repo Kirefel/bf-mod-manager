@@ -1,7 +1,7 @@
 <template>
   <q-item>
     <q-item-section side top>
-      <q-checkbox :disable="required" v-model="state.enabled" />
+      <q-checkbox :disable="required" v-model="enabled" />
     </q-item-section>
     <q-item-section>
       <q-item-label>{{ modTitle }}</q-item-label>
@@ -25,8 +25,7 @@ export default {
   props: {
     modTitle: String,
     description: String,
-    required: Boolean,
-    state
+    required: Boolean
   }
 }
 </script>
