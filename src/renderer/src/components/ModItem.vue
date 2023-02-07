@@ -4,8 +4,8 @@
       <q-checkbox :disable="required" :model-value="false" />
     </q-item-section>
     <q-item-section>
-      <q-item-label>{{ modTitle }}</q-item-label>
-      <q-item-label caption lines="2"> {{ description }}</q-item-label>
+      <q-item-label>{{ mod.name }}</q-item-label>
+      <q-item-label caption lines="2"> {{ mod.description }}</q-item-label>
     </q-item-section>
     <q-item-section side>
       <q-btn-group flat>
@@ -21,9 +21,13 @@ export default {
   name: 'mod-item',
 
   props: {
-    modTitle: String,
-    description: String,
-    required: Boolean
+    modID: String
+  },
+
+  computed: {
+    mod() {
+      return this.$store.state.modList[this.modID]
+    }
   }
 }
 </script>

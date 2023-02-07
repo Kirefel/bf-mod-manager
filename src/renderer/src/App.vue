@@ -20,28 +20,7 @@
         </q-inner-loading>
 
         <div v-if="!$store.state.loading">
-          <mod-item
-            modTitle="Mod Loader"
-            description="(Required) Enables modding of the game"
-            required
-            installed
-          />
-          <mod-item
-            modTitle="Quality of Life"
-            description="Adds many QoL and accessibility features such as screen shake reduction and more save slots"
-            installed
-          />
-          <mod-item modTitle="Enhanced Debug" description="Adds more debug features" />
-          <mod-item modTitle="Rando" description="You know what this is" installed />
-          <mod-item modTitle="Rando Beta" description="Upcoming rando releases" installed />
-          <mod-item
-            modTitle="Scene Explorer"
-            description="A utility for exploring the Unity objects and components"
-          />
-          <mod-item
-            modTitle="Speedrun.com"
-            description="Replaces the in-game leaderboards with ones sourced from speedrun.com"
-          />
+          <mod-item v-for="id in Object.keys($store.state.modList)" :key="id" :modID="id" />
         </div>
       </q-list>
     </q-page-container>
