@@ -10,7 +10,8 @@ export default createStore({
       modsSource: "https://github.com/Kirefel/OriDeMods/index.json"
     },
     loading: false,
-    modList: { }
+    modList: { },
+    installed: { }
   },
   mutations: {
     setSetting(state, { settingName, value }) {
@@ -21,6 +22,18 @@ export default createStore({
     },
     setModList(state, value) {
       state.modList = value
+    },
+    setInstalled(state, value) {
+      state.installed = value
+    },
+    enableMod(state, { id, enabled }) {
+      if (state.installed[id] === undefined) {
+        state.installed[id] = {
+          enabled
+        }
+      } else {
+        state.installed[id].enabled = enabled
+      }
     }
   },
   actions: {
@@ -29,6 +42,18 @@ export default createStore({
       this.commit('setLoading', true);
       
       setTimeout(() => {
+
+        this.commit('setInstalled', {
+          ModLoader: {
+            enabled: true
+          },
+          QoL: {
+            enabled: true
+          },
+          Rando: {
+            enabled: false
+          }
+        })
 
         this.commit('setModList', {
           ModLoader: {
