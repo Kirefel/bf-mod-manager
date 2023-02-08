@@ -10,8 +10,10 @@
     <q-item-section side>
       <q-btn-group flat>
         <q-icon v-if="isInstalled" class="downloaded-icon" name="done" title="Up to date" />
-        <q-btn v-if="!isInstalled" icon="file_download" title="Download" />
-        <q-btn icon="launch" title="View in Browser" href="https://github.com" target="_blank" />
+        <q-btn v-if="!isInstalled" icon="file_download" title="Download" @click="download" :loading="$store.getters.isDownloading(modID)">
+
+        </q-btn>
+        <q-btn icon="launch" :title="mod.url" :href="mod.url" target="_blank" />
       </q-btn-group>
     </q-item-section>
   </q-item>
@@ -23,6 +25,12 @@ export default {
 
   props: {
     modID: String
+  },
+
+  methods: {
+    download() {
+      this.$store.dispatch('installMod', { id: this.modID, version: 'latest' })
+    }
   },
 
   computed: {

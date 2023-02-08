@@ -28,7 +28,12 @@
     <q-footer elevated class="bg-grey-8 text-white">
       <q-toolbar>
         <q-space />
-        <q-btn color="green">Launch</q-btn>
+        <q-btn color="green" :loading="$store.getters.anyDownloads" @click="launch">
+          <span>Launch</span>
+          <template v-slot:loading>
+            <q-spinner-dots />
+          </template>
+        </q-btn>
         <q-space />
       </q-toolbar>
     </q-footer>
@@ -55,6 +60,20 @@ export default {
   methods: {
     refresh() {
       this.$store.dispatch('loadList')
+    },
+    launch() {
+      // if mod loader is not installed, do it now
+      // then do the actual launch
+      if (this.$store.state.installed.ModLoader === undefined) {
+        this.$store.dispatch('installMod', { id: 'ModLoader', version: 'latest' })
+          .then(() => {
+            console.log("LAUNCHING!")
+            //   window.ipc.send('LAUNCH') // TODO launch params
+          })
+      } else {
+        console.log("LAUNCHING!")
+        // window.ipc.send('LAUNCH')
+      }
     }
   }
 }
