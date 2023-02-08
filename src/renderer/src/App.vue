@@ -8,7 +8,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-dialog v-model="settingsVisible">
+    <q-dialog v-model="settingsVisible" @hide="saveSettings">
       <settings />
     </q-dialog>
 
@@ -57,7 +57,14 @@ export default {
     }
   },
 
+  mounted() {
+    this.refresh()
+  },
+
   methods: {
+    saveSettings() {
+      this.$store.dispatch('saveSettings')
+    },
     refresh() {
       this.$store.dispatch('loadList')
     },

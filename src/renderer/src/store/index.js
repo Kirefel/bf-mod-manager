@@ -138,6 +138,10 @@ export default createStore({
         
         this.commit('setLoading', false);
       }, 500);
+    },
+    saveSettings(context) {
+      console.log('saving the settings!')
+      window.ipc.send('SAVE_SETTINGS', { ...context.state.settings })
     }
   }
 })

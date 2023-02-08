@@ -2,6 +2,7 @@ import { app, shell, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { writeFile } from 'fs'
 
 function createWindow() {
   // Create the browser window.
@@ -85,3 +86,11 @@ ipcMain.on('OPEN_FOLDER_DIALOG', event => {
     event.reply('OPEN_FOLDER_DIALOG', { ...x });
   })
 });
+
+ipcMain.on('SAVE_SETTINGS', (event, data) => {
+  const path = join(app.getPath('userData'), 'config.json')
+  console.log(`Received SAVE_SETTINGS to ${path}`)
+  writeFile(path, JSON.stringify(data), err => {
+    console.log(err)
+  })
+})

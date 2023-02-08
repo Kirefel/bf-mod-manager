@@ -9,7 +9,7 @@
     <q-card-section>
       <q-checkbox v-model="steam" label="Use Steam" />
 
-      <q-input v-model="gamePath" label="Game path" spellcheck="false">
+      <q-input v-model="gamePath" label="Game path" spellcheck="false" :disable="$store.state.settings.steam">
         <template v-slot:append>
           <q-btn flat @click="browseFile">...</q-btn>
         </template>
