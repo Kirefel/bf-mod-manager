@@ -113,3 +113,15 @@ ipcMain.on('SAVE_MOD_STATE', (event, { path, data }) => {
     console.log(err)
   })
 })
+
+ipcMain.on('LOAD_MOD_STATE', (event, path) => {
+  const file = join(path, 'manifest.json')
+  readFile(file, (err, data) => {
+    if (!err && data) {
+      const json = JSON.parse(data.toString())
+      event.reply('LOAD_MOD_STATE', json)
+    } else {
+      event.reply('LOAD_MOD_STATE', null)
+    }
+  })
+})

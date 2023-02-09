@@ -35,9 +35,9 @@ export default createStore({
     setModList(state, value) {
       state.modList = value
     },
-    // setInstalled(state, value) {
-    //   state.installed = value
-    // },
+    setInstallState(state, value) {
+      state.installed = value
+    },
     setInstalled(state, { id, installed }) {
       if (state.installed[id] === undefined && installed) {
         state.installed[id] = {

@@ -66,6 +66,12 @@ export default {
       this.refresh()
     })
 
+    window.ipc.on('LOAD_MOD_STATE', payload => {
+      if (payload !== null) {
+        this.$store.commit('setInstallState', payload)
+      }
+    })
+
     window.ipc.send('LOAD_SETTINGS')
   },
 
@@ -74,6 +80,8 @@ export default {
       this.$store.dispatch('saveSettings')
     },
     refresh() {
+      // TODO default value for mod install path
+      window.ipc.send('LOAD_MOD_STATE', this.$store.state.settings.modsPath)
       this.$store.dispatch('loadList')
     },
     launch() {

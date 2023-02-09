@@ -24,7 +24,8 @@ const validChannels = [
   'OPEN_FOLDER_DIALOG',
   'SAVE_SETTINGS',
   'LOAD_SETTINGS',
-  'SAVE_MOD_STATE'
+  'SAVE_MOD_STATE',
+  'LOAD_MOD_STATE'
 ];
 contextBridge.exposeInMainWorld(
   'ipc', {
