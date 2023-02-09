@@ -41,7 +41,7 @@ export default createStore({
     setInstalled(state, { id, installed }) {
       if (state.installed[id] === undefined && installed) {
         state.installed[id] = {
-          enabled: false
+          enabled: id === "ModLoader"
         }
       } else {
         delete state.installed[id]
@@ -84,7 +84,9 @@ export default createStore({
         setTimeout(() => {
           this.commit('setInstalling', { id, value: false })
           this.commit('setInstalled', { id, installed: true })
-          // TODO write to file
+          
+          this.dispatch('saveInstallState')
+          // TODO save install state when clicking launch also, but not when checking boxes
 
           resolve()
         }, 5000);
@@ -145,6 +147,10 @@ export default createStore({
     saveSettings(context) {
       console.log('saving the settings!')
       window.ipc.send('SAVE_SETTINGS', { ...context.state.settings })
+    },
+    saveInstallState(context) {
+      console.log('saving the installed mods!')
+      window.ipc.send('SAVE_MOD_STATE', { path: this.state.settings.modsPath, data: JSON.parse(JSON.stringify(this.state.installed)) })
     }
   }
 })

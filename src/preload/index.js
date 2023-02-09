@@ -19,7 +19,13 @@ import { contextBridge, ipcRenderer } from 'electron'
 //   window.api = api
 // }
 
-const validChannels = [ 'OPEN_FILE_DIALOG', 'OPEN_FOLDER_DIALOG', 'SAVE_SETTINGS', 'LOAD_SETTINGS' ];
+const validChannels = [ 
+  'OPEN_FILE_DIALOG',
+  'OPEN_FOLDER_DIALOG',
+  'SAVE_SETTINGS',
+  'LOAD_SETTINGS',
+  'SAVE_MOD_STATE'
+];
 contextBridge.exposeInMainWorld(
   'ipc', {
     send: (channel, data) => {

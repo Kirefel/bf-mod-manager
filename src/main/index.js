@@ -2,7 +2,7 @@ import { app, shell, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { writeFile } from 'fs'
+import { readFile, writeFile } from 'fs'
 
 function createWindow() {
   // Create the browser window.
@@ -74,7 +74,6 @@ app.on('window-all-closed', () => {
 // code. You can also put them in separate files and require them here.
 const { ipcMain, dialog } = require('electron');
 
-
 ipcMain.on('OPEN_FILE_DIALOG', event => {
   dialog.showOpenDialog({ properties: ['openFile']}).then(x => {
     event.reply('OPEN_FILE_DIALOG', { ...x });
@@ -91,6 +90,26 @@ ipcMain.on('SAVE_SETTINGS', (event, data) => {
   const path = join(app.getPath('userData'), 'config.json')
   console.log(`Received SAVE_SETTINGS to ${path}`)
   writeFile(path, JSON.stringify(data), err => {
+    console.log(err)
+  })
+})
+
+ipcMain.on('LOAD_SETTINGS', event => {
+  const path = join(app.getPath('userData'), 'config.json')
+  readFile(path, (err, data) => {
+    if (!err && data) {
+      const json = JSON.parse(data.toString())
+      event.reply('LOAD_SETTINGS', json)
+    } else {
+      event.reply('LOAD_SETTINGS', null)
+    }
+  })
+})
+
+ipcMain.on('SAVE_MOD_STATE', (event, { path, data }) => {
+  const file = join(path, 'manifest.json')
+  console.log(`Received SAVE_MOD_STATE to ${file}`)
+  writeFile(file, JSON.stringify(data, null, 2), err => {
     console.log(err)
   })
 })
