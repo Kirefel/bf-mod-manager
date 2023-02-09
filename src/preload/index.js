@@ -19,7 +19,7 @@ import { contextBridge, ipcRenderer } from 'electron'
 //   window.api = api
 // }
 
-const validChannels = [ 'OPEN_FILE_DIALOG', 'OPEN_FOLDER_DIALOG', 'SAVE_SETTINGS' ];
+const validChannels = [ 'OPEN_FILE_DIALOG', 'OPEN_FOLDER_DIALOG', 'SAVE_SETTINGS', 'LOAD_SETTINGS' ];
 contextBridge.exposeInMainWorld(
   'ipc', {
     send: (channel, data) => {
@@ -33,5 +33,10 @@ contextBridge.exposeInMainWorld(
         ipcRenderer.on(channel, (event, ...args) => func(...args));
       }
     },
+    invoke: (channel, args) => {
+      if (validChannels.includes(channel)) {
+        return ipcRenderer.invoke(channel, args)
+      }
+    }
   },
 );

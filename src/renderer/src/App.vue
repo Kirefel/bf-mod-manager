@@ -58,7 +58,15 @@ export default {
   },
 
   mounted() {
-    this.refresh()
+    window.ipc.on('LOAD_SETTINGS', payload => {
+      if (payload !== null) {
+        this.$store.commit('setAllSettings', payload)
+      }
+      
+      this.refresh()
+    })
+
+    window.ipc.send('LOAD_SETTINGS')
   },
 
   methods: {

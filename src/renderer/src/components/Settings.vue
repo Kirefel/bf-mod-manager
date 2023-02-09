@@ -59,7 +59,7 @@ export default {
         return;
       
       this.gamePath = payload.filePaths[0];
-    }),
+    })
     window.ipc.on('OPEN_FOLDER_DIALOG', payload => {
       if (payload.canceled || payload.filePaths === undefined || payload.filePaths.length === 0)
         return;

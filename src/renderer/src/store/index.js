@@ -26,6 +26,9 @@ export default createStore({
     setSetting(state, { settingName, value }) {
       state.settings[settingName] = value
     },
+    setAllSettings(state, settings) {
+      state.settings = { ...settings }
+    },
     setLoading(state, value) {
       state.loading = value
     },
