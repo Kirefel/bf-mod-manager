@@ -62,7 +62,7 @@ export default {
       if (payload !== null) {
         this.$store.commit('setAllSettings', payload)
       }
-      
+
       this.refresh()
     })
 
@@ -82,10 +82,12 @@ export default {
       if (this.$store.state.installed.ModLoader === undefined) {
         this.$store.dispatch('installMod', { id: 'ModLoader', version: 'latest' })
           .then(() => {
+            this.$store.dispatch('saveInstallState')
             console.log("LAUNCHING!")
             //   window.ipc.send('LAUNCH') // TODO launch params
           })
       } else {
+        this.$store.dispatch('saveInstallState')
         console.log("LAUNCHING!")
         // window.ipc.send('LAUNCH')
       }

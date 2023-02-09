@@ -86,7 +86,6 @@ export default createStore({
           this.commit('setInstalled', { id, installed: true })
           
           this.dispatch('saveInstallState')
-          // TODO save install state when clicking launch also, but not when checking boxes
 
           resolve()
         }, 5000);
