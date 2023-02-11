@@ -3,7 +3,7 @@ import { createStore } from 'vuex'
 export default createStore({
   state: {
     settings: {
-      steam: false,
+      steam: true,
       gamePath: "",
       modsPath: "",
       debugMode: false,
@@ -41,10 +41,11 @@ export default createStore({
     setInstallState(state, value) {
       state.installed = value
     },
-    setInstalled(state, { id, installed }) {
+    setInstalled(state, { id, installed, version }) {
       if (state.installed[id] === undefined && installed) {
         state.installed[id] = {
-          enabled: id === "ModLoader"
+          enabled: id === "ModLoader",
+          version
         }
       } else {
         delete state.installed[id]
@@ -75,28 +76,43 @@ export default createStore({
   actions: {
     installMod(context, { id, version }) {
       
-      const modInfo = this.state.modList[id]
+      const modInfo = context.state.modList[id]
       if (modInfo === undefined) {
         return
       }
       
-      this.commit('setInstalling', { id, value: true })
+      context.commit('setInstalling', { id, value: true })
       console.log(`Installing ${modInfo.name}`)
 
-      return new Promise(resolve => {
-        setTimeout(() => {
-          this.commit('setInstalling', { id, value: false })
-          this.commit('setInstalled', { id, installed: true })
-          
-          this.dispatch('saveInstallState')
+      const versionID = version !== 'latest' ? version : modInfo.versions[0].version
 
+      return new Promise((resolve, reject) => {
+        window.ipc.invoke('DOWNLOAD_TO_DIRECTORY', { 
+          downloadUrl: modInfo.versions.find(v => v.version == versionID).url,
+          modsPath: context.state.settings.modsPath,
+          modName: id
+        }).catch(err => {
+          console.log('rejecting')
+          context.commit('setInstalling', { id, value: false })
+          // context.commit('setInstalled', { id, installed: true, version: versionID })
+          
+          context.dispatch('saveInstallState')
+  
+          reject(err)
+        }).then(() => {
+          console.log('resolving')
+          context.commit('setInstalling', { id, value: false })
+          context.commit('setInstalled', { id, installed: true, version: versionID })
+          
+          context.dispatch('saveInstallState')
+  
           resolve()
-        }, 5000);
+        })
       })
     },
     loadList(context) {
       console.log(`Beginning load from ${context.state.settings.modsSource}`)
-      this.commit('setLoading', true);
+      context.commit('setLoading', true);
       
       setTimeout(() => {
         this.commit('setModList', {
@@ -104,46 +120,94 @@ export default createStore({
             name: "Mod Loader",
             description: "(Required) Enables modding of the game",
             required: true,
-            url: "https://github.com/ori-community/bf-modloader"
+            url: "https://github.com/ori-community/bf-modloader",
+            versions: [
+              {
+                "version": "0.6.0-alpha",
+                "url": "https://github.com/ori-community/bf-modloader/releases/download/v0.6.0-alpha/OriDeModLoader.zip"
+              }
+            ]
           },
           QoL: {
             name: "Quality of Life",
             description: "Adds many QoL and accessibility features such as screen shake reduction and more save slots",
-            url: "https://github.com/Kirefel/OriDeQol"
+            url: "https://github.com/Kirefel/OriDeQol",
+            versions: [
+              {
+                "version": "0.6.0-alpha",
+                "url": "https://github.com/ori-community/bf-modloader/releases/download/v0.6.0-alpha/OriDeModLoader.zip"
+              }
+            ]
           },
           InputConfig: {
             name: "Input Binding",
             description: "Adds input binding in-game and also allows rebinding controllers",
-            url: "https://github.com/Kirefel/OriDeInputMod"
+            url: "https://github.com/Kirefel/OriDeInputMod",
+            versions: [
+              {
+                "version": "0.6.0-alpha",
+                "url": "https://github.com/ori-community/bf-modloader/releases/download/v0.6.0-alpha/OriDeModLoader.zip"
+              }
+            ]
           },
           DebugEnhanced: {
             name: "Enhanced Debug",
             description: "Adds more debug features",
-            url: "https://github.com/ori-community/bf-modloader"
+            url: "https://github.com/ori-community/bf-modloader",
+            versions: [
+              {
+                "version": "0.6.0-alpha",
+                "url": "https://github.com/ori-community/bf-modloader/releases/download/v0.6.0-alpha/OriDeModLoader.zip"
+              }
+            ]
           },
           Rando: {
             name: "Rando",
             description: "You know what this is",
-            url: "https://github.com/ori-community/bf-modloader"
+            url: "https://github.com/ori-community/bf-modloader",
+            versions: [
+              {
+                "version": "0.6.0-alpha",
+                "url": "https://github.com/ori-community/bf-modloader/releases/download/v0.6.0-alpha/OriDeModLoader.zip"
+              }
+            ]
           },
           RandoBeta: {
             name: "Rando Beta",
             description: "Upcoming rando releases. Don't use alongside the release version of rando.",
-            url: "https://github.com/ori-community/bf-modloader"
+            url: "https://github.com/ori-community/bf-modloader",
+            versions: [
+              {
+                "version": "0.6.0-alpha",
+                "url": "https://github.com/ori-community/bf-modloader/releases/download/v0.6.0-alpha/OriDeModLoader.zip"
+              }
+            ]
           },
           SceneExplorer: {
             name: "Scene Explorer",
             description: "A utility for exploring the Unity objects and components",
-            url: "https://github.com/Kirefel/OriSceneExplorer"
+            url: "https://github.com/Kirefel/OriSceneExplorer",
+            versions: [
+              {
+                "version": "0.6.0-alpha",
+                "url": "https://github.com/ori-community/bf-modloader/releases/download/v0.6.0-alpha/OriDeModLoader.zip"
+              }
+            ]
           },
           SRDC: {
             name: "Speedrun.com",
             description: "Replaces the in-game leaderboards with ones sourced from speedrun.com",
-            url: "https://github.com/Kirefel/OriDeSRDC"
+            url: "https://github.com/Kirefel/OriDeSRDC",
+            versions: [
+              {
+                "version": "0.6.0-alpha",
+                "url": "https://github.com/ori-community/bf-modloader/releases/download/v0.6.0-alpha/OriDeModLoader.zip"
+              }
+            ]
           }
         })
         
-        this.commit('setLoading', false);
+        context.commit('setLoading', false);
       }, 500);
     },
     saveSettings(context) {
@@ -152,7 +216,7 @@ export default createStore({
     },
     saveInstallState(context) {
       console.log('saving the installed mods!')
-      window.ipc.send('SAVE_MOD_STATE', { path: this.state.settings.modsPath, data: JSON.parse(JSON.stringify(this.state.installed)) })
+      window.ipc.send('SAVE_MOD_STATE', { path: context.state.settings.modsPath, data: JSON.parse(JSON.stringify(context.state.installed)) })
     }
   }
 })

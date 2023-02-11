@@ -2,7 +2,9 @@ import { app, shell, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { readFile, writeFile } from 'fs'
+import { createWriteStream, existsSync, readFile, writeFile, rmSync } from 'fs'
+import decompress from 'decompress'
+import { get } from 'https'
 
 function createWindow() {
   // Create the browser window.
@@ -88,9 +90,10 @@ ipcMain.on('OPEN_FOLDER_DIALOG', event => {
 
 ipcMain.on('SAVE_SETTINGS', (event, data) => {
   const path = join(app.getPath('userData'), 'config.json')
-  console.log(`Received SAVE_SETTINGS to ${path}`)
   writeFile(path, JSON.stringify(data), err => {
-    console.log(err)
+    if (err) {
+      console.log(err)
+    }
   })
 })
 
@@ -108,9 +111,10 @@ ipcMain.on('LOAD_SETTINGS', event => {
 
 ipcMain.on('SAVE_MOD_STATE', (event, { path, data }) => {
   const file = join(path, 'manifest.json')
-  console.log(`Received SAVE_MOD_STATE to ${file}`)
   writeFile(file, JSON.stringify(data, null, 2), err => {
-    console.log(err)
+    if (err) {
+      console.log(err)
+    }
   })
 })
 
@@ -137,4 +141,69 @@ ipcMain.on('LAUNCH', (event, { exePath, modsPath, autoClose }) => {
   if (autoClose) {
     app.quit()
   }
+})
+
+function download(url, destination) {
+  return new Promise((resolve, reject) => {
+    get(url, res => {
+      if (res.statusCode === 200) {
+        const stream = createWriteStream(destination)
+        res.on('close', resolve)
+        res.on('error', reject)
+        res.pipe(stream)
+      } else if (res.statusCode == 302) {
+        console.log(`Redirect to ${res.headers.location}`)
+        resolve(download(res.headers.location, destination))
+      } else {
+        reject(res.statusCode)
+      }
+    })
+  })
+}
+
+ipcMain.handle('DOWNLOAD_TO_DIRECTORY', (event, { downloadUrl, modsPath, modName }) => {
+  const outputDir = join(modsPath, modName)
+  
+  const tmp = require('tmp')
+
+  console.log(`Will download ${downloadUrl} to ${outputDir}`)
+  
+  return new Promise((resolve, reject) => {
+
+    tmp.file((err, path, fd, removeCallback) => {
+
+      if (err) {
+        console.log(err)
+        reject(err)
+      }
+
+      console.log(`Downloading ${path}`)
+
+      download(downloadUrl, path).then(() => {
+        
+        console.log('Downloaded!')
+
+        if (existsSync(outputDir)) {
+          console.log('Removing existing install')
+          // Delete the old one if it exists
+          rmSync(outputDir, { recursive: true, force: true })
+        }
+    
+        // extract to new location
+        console.log(`Decompressing ${path} to ${outputDir}`)
+        decompress(path, outputDir).then(() => {
+          console.log('Successfully installed ' + modName)
+          removeCallback()
+          resolve()
+        }).catch(reason => {
+          console.log(reason)
+          reject(reason)
+        })
+
+      }).catch(err => {
+        reject(err)
+      })
+    
+    })
+  })
 })

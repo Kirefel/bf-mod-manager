@@ -3,7 +3,7 @@
     <q-header elevated class="bg-primary text-white">
       <q-toolbar>
         <q-toolbar-title>Ori Launcher</q-toolbar-title>
-        <q-btn icon="refresh" flat round title="Refresh" @click="refresh" />
+        <q-btn icon="refresh" flat round title="Refresh" @click="refresh" :disable="$store.state.loading" />
         <q-btn icon="settings" flat round title="Open Settings" @click="settingsVisible = true" />
       </q-toolbar>
     </q-header>

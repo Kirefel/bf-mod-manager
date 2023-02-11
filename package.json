@@ -20,8 +20,10 @@
     "@electron-toolkit/preload": "^1.0.3",
     "@electron-toolkit/utils": "^1.0.2",
     "@quasar/extras": "^1.15.10",
+    "decompress": "^4.2.1",
     "electron-updater": "^5.3.0",
     "quasar": "^2.11.5",
+    "tmp": "^0.2.1",
     "vuex": "^4.1.0"
   },
   "devDependencies": {
