@@ -8,7 +8,7 @@ export default createStore({
       modsPath: "",
       autoClose: true,
       debugMode: false,
-      modsSource: "https://github.com/Kirefel/OriDeMods/index.json"
+      modsSource: "https://raw.githubusercontent.com/Kirefel/ori-bf-mod-index/main/mods.json"
     },
     loading: false,
     modList: { },
@@ -129,90 +129,16 @@ export default createStore({
       console.log(`Beginning load from ${context.state.settings.modsSource}`)
       context.commit('setLoading', true);
       
-      setTimeout(() => {
-        this.commit('setModList', {
-          ModLoader: {
-            name: "Mod Loader",
-            description: "(Required) Enables modding of the game",
-            required: true,
-            url: "https://github.com/ori-community/bf-modloader",
-            versions: [
-              {
-                "version": "0.6.0-alpha",
-                "url": "https://github.com/ori-community/bf-modloader/releases/download/v0.6.0-alpha/OriDeModLoader.zip"
-              }
-            ]
-          },
-          QoL: {
-            name: "Quality of Life",
-            description: "Adds many QoL and accessibility features such as screen shake reduction and more save slots",
-            url: "https://github.com/Kirefel/OriDeQol",
-            versions: [
-              {
-                "version": "0.6.0-alpha",
-                "url": "https://github.com/ori-community/bf-modloader/releases/download/v0.6.0-alpha/OriDeModLoader.zip"
-              }
-            ]
-          },
-          InputConfig: {
-            name: "Input Binding",
-            description: "Adds input binding in-game and also allows rebinding controllers",
-            url: "https://github.com/Kirefel/OriDeInputMod",
-            versions: [
-              {
-                "version": "0.6.0-alpha",
-                "url": "https://github.com/ori-community/bf-modloader/releases/download/v0.6.0-alpha/OriDeModLoader.zip"
-              }
-            ]
-          },
-          DebugEnhanced: {
-            name: "Enhanced Debug",
-            description: "Adds more debug features",
-            url: "https://github.com/ori-community/bf-modloader",
-            versions: [
-              {
-                "version": "0.6.0-alpha",
-                "url": "https://github.com/ori-community/bf-modloader/releases/download/v0.6.0-alpha/OriDeModLoader.zip"
-              }
-            ]
-          },
-          Rando: {
-            name: "Rando",
-            description: "You know what this is",
-            url: "https://github.com/ori-community/bf-modloader",
-            versions: [
-              {
-                "version": "0.6.0-alpha",
-                "url": "https://github.com/ori-community/bf-modloader/releases/download/v0.6.0-alpha/OriDeModLoader.zip"
-              }
-            ]
-          },
-          SceneExplorer: {
-            name: "Scene Explorer",
-            description: "A utility for exploring the Unity objects and components",
-            url: "https://github.com/Kirefel/OriSceneExplorer",
-            versions: [
-              {
-                "version": "0.6.0-alpha",
-                "url": "https://github.com/ori-community/bf-modloader/releases/download/v0.6.0-alpha/OriDeModLoader.zip"
-              }
-            ]
-          },
-          SRDC: {
-            name: "Speedrun.com",
-            description: "Replaces the in-game leaderboards with ones sourced from speedrun.com",
-            url: "https://github.com/Kirefel/OriDeSRDC",
-            versions: [
-              {
-                "version": "0.6.0-alpha",
-                "url": "https://github.com/ori-community/bf-modloader/releases/download/v0.6.0-alpha/OriDeModLoader.zip"
-              }
-            ]
-          }
-        })
-        
-        context.commit('setLoading', false);
-      }, 500);
+      // fetch(context.state.settings.modsSource).then(res => res.json()).then(list => {
+      window.ipc.invoke('DOWNLOAD_MODLIST', {
+        url: context.state.settings.modsSource
+      }).then(list => {
+        context.commit('setModList', list)
+        context.commit('setLoading', false)
+      }).catch(() => {
+        context.commit('setModList', {})
+        context.commit('setLoading', false)
+      })
     },
     saveSettings(context) {
       console.log('saving the settings!')

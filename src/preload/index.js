@@ -28,7 +28,8 @@ const validChannels = [
   'LOAD_MOD_STATE',
   'DOWNLOAD_TO_DIRECTORY',
   'DELETE_MOD',
-  'LAUNCH'
+  'LAUNCH',
+  'DOWNLOAD_MODLIST'
 ];
 contextBridge.exposeInMainWorld(
   'ipc', {

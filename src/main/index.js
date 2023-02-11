@@ -161,6 +161,8 @@ function download(url, destination) {
       } else {
         reject(res.statusCode)
       }
+    }).on('error', () => {
+      reject()
     })
   })
 }
@@ -222,5 +224,28 @@ ipcMain.handle('DELETE_MOD', (event, { modsPath, modName }) => {
     }
 
     resolve()
+  })
+})
+
+ipcMain.handle('DOWNLOAD_MODLIST', (event, { url }) => {
+
+  return new Promise((resolve) => {
+    get(url, res => {
+
+      let data = []
+      console.log('Status Code:', res.statusCode)
+    
+      res.on('data', chunk => {
+        data.push(chunk)
+      });
+    
+      res.on('end', () => {
+        console.log('Response ended: ')
+        resolve(JSON.parse(Buffer.concat(data).toString()).mods)
+      });
+      
+    }).on('error', err => {
+      console.log('Error: ', err.message);
+    });
   })
 })
