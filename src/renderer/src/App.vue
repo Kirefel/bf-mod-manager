@@ -116,6 +116,12 @@ export default {
       // then do the actual launch
       if (this.$store.state.installed.ModLoader === undefined) {
         this.$store.dispatch('installMod', { id: 'ModLoader', version: 'latest' })
+          .catch(err => {
+            this.$q.notify({ 
+              type: 'negative',
+              message: 'Error downloading Mod Loader: ' + err
+            })
+          })
           .then(() => {
             this.$store.dispatch('saveInstallState')
             console.log("LAUNCHING!")

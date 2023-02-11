@@ -159,7 +159,7 @@ function download(url, destination) {
         console.log(`Redirect to ${res.headers.location}`)
         resolve(download(res.headers.location, destination))
       } else {
-        reject(res.statusCode)
+        reject(`Failed to download ${url}: ${res.statusCode} ${res.statusMessage}`)
       }
     }).on('error', () => {
       reject()
@@ -169,7 +169,7 @@ function download(url, destination) {
 
 ipcMain.handle('DOWNLOAD_TO_DIRECTORY', (event, { downloadUrl, modsPath, modName }) => {
   const outputDir = join(modsPath, modName)
-  
+
   const tmp = require('tmp')
 
   console.log(`Will download ${downloadUrl} to ${outputDir}`)
@@ -181,6 +181,7 @@ ipcMain.handle('DOWNLOAD_TO_DIRECTORY', (event, { downloadUrl, modsPath, modName
       if (err) {
         console.log(err)
         reject(err)
+        return
       }
 
       console.log(`Downloading ${path}`)
@@ -197,13 +198,16 @@ ipcMain.handle('DOWNLOAD_TO_DIRECTORY', (event, { downloadUrl, modsPath, modName
     
         // extract to new location
         console.log(`Decompressing ${path} to ${outputDir}`)
+
         decompress(path, outputDir).then(() => {
           console.log('Successfully installed ' + modName)
           removeCallback()
           resolve()
+          return
         }).catch(reason => {
           console.log(reason)
           reject(reason)
+          return
         })
 
       }).catch(err => {

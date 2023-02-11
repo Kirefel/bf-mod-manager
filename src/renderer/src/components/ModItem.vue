@@ -36,6 +36,7 @@
 <script>
 import { ref } from 'vue'
 import { age } from '../modFuncs'
+import { useQuasar } from 'quasar'
 
 export default {
   name: 'mod-item',
@@ -46,13 +47,20 @@ export default {
 
   setup() {
     return {
-      deleteDialog: ref(false)
+      deleteDialog: ref(false),
+      $q: useQuasar()
     }
   },
 
   methods: {
     download() {
       this.$store.dispatch('installMod', { id: this.modID, version: 'latest' })
+        .catch(err => {
+          this.$q.notify({ 
+            type: 'negative',
+            message: 'Error downloading mod: ' + err
+          })
+        })
     },
     uninstall() {
       this.$store.dispatch('uninstallMod', this.modID)

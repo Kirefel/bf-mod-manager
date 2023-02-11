@@ -94,22 +94,17 @@ export default createStore({
           downloadUrl: modInfo.versions.find(v => v.version == versionID).url,
           modsPath: context.state.settings.modsPath,
           modName: id
-        }).catch(err => {
-          console.log('rejecting')
-          context.commit('setInstalling', { id, value: false })
-          // context.commit('setInstalled', { id, installed: true, version: versionID })
-          
-          context.dispatch('saveInstallState')
-  
-          reject(err)
         }).then(() => {
-          console.log('resolving')
           context.commit('setInstalling', { id, value: false })
           context.commit('setInstalled', { id, installed: true, version: versionID })
           
           context.dispatch('saveInstallState')
   
           resolve()
+        }).catch(err => {
+          context.commit('setInstalling', { id, value: false })
+  
+          reject(err)
         })
       })
     },

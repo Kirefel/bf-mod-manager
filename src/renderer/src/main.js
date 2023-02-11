@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import { Quasar } from 'quasar'
+import { Quasar, Notify } from 'quasar'
 import Vuex from 'vuex'
 
 import store from './store'
@@ -18,7 +18,7 @@ import App from './App.vue'
 const myApp = createApp(App)
 
 myApp.use(Quasar, {
-  plugins: {}, // import Quasar plugins and add here
+  plugins: { Notify }, // import Quasar plugins and add here
 }).use(Vuex).use(store)
 
 // Assumes you have a <div id="app"></div> in your index.html
