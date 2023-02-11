@@ -125,3 +125,16 @@ ipcMain.on('LOAD_MOD_STATE', (event, path) => {
     }
   })
 })
+
+ipcMain.on('LAUNCH', (event, { exePath, modsPath, autoClose }) => {
+  const injectorExe = join(modsPath, 'ModLoader', 'injector.exe')
+  // const manifestPath = join(modsPath, 'manifest.json')
+
+  const command = `${injectorExe} -launch ${exePath}`
+
+  console.log(`Executing ${command}`)
+
+  if (autoClose) {
+    app.quit()
+  }
+})

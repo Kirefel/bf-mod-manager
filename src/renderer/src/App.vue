@@ -33,7 +33,7 @@
     <q-footer elevated class="bg-grey-8 text-white">
       <q-toolbar>
         <q-space />
-        <q-btn color="green" :loading="$store.getters.anyDownloads" @click="launch">
+        <q-btn color="green" :loading="$store.getters.anyDownloads" @click="launch" :disable="launchNotConfigured" :title="launchNotConfigured ? 'Open settings to configure launch' : ''">
           <span>Launch</span>
           <template v-slot:loading>
             <q-spinner-dots />
@@ -86,6 +86,10 @@ export default {
     },
     availableMods() {
       return Object.keys(this.$store.state.modList).filter(x => !this.$store.getters.isInstalled(x))
+    },
+    launchNotConfigured() {
+      const exePath = this.$store.state.settings.gamePath
+      return !this.$store.state.settings.steam && (exePath === undefined || exePath === '')
     }
   },
 
