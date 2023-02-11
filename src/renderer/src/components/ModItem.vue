@@ -11,7 +11,9 @@
       <q-btn-group flat>
         <q-icon v-if="isInstalled" class="downloaded-icon" name="done" title="Up to date" />
         <q-btn v-if="!isInstalled" icon="file_download" title="Download" @click="download" :loading="$store.getters.isDownloading(modID)">
-
+          <q-badge v-if="modID === 'ModLoader'" floating rounded color="blue">
+            <!-- <q-icon name="info" /> -->
+          </q-badge>
         </q-btn>
         <q-btn icon="launch" :title="mod.url" :href="mod.url" target="_blank" />
       </q-btn-group>
@@ -20,6 +22,7 @@
 </template>
 
 <script>
+// TODO delete mods from disk with a button
 export default {
   name: 'mod-item',
 
