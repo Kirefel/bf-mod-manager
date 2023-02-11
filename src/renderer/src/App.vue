@@ -2,7 +2,7 @@
   <q-layout view="hHh lpR fFf">
     <q-header elevated class="bg-primary text-white">
       <q-toolbar>
-        <q-toolbar-title>Ori Launcher</q-toolbar-title>
+        <q-toolbar-title>Ori and the Blind Forest Mod Manager</q-toolbar-title>
         <q-btn icon="refresh" flat round title="Refresh" @click="refresh" :disable="$store.state.loading" />
         <q-btn icon="settings" flat round title="Open Settings" @click="settingsVisible = true" />
       </q-toolbar>
@@ -110,12 +110,20 @@ export default {
           .then(() => {
             this.$store.dispatch('saveInstallState')
             console.log("LAUNCHING!")
-            //   window.ipc.send('LAUNCH') // TODO launch params
+            window.ipc.send('LAUNCH', {
+              exePath: this.$store.state.settings.steam ? 'steam://run/387290' : this.$store.state.settings.gamePath,
+              modsPath: this.$store.state.settings.modsPath,
+              autoClose: this.$store.state.settings.autoClose
+            })
           })
       } else {
         this.$store.dispatch('saveInstallState')
         console.log("LAUNCHING!")
-        // window.ipc.send('LAUNCH')
+        window.ipc.send('LAUNCH', {
+          exePath: this.$store.state.settings.steam ? 'steam://run/387290' : this.$store.state.settings.gamePath,
+          modsPath: this.$store.state.settings.modsPath,
+          autoClose: this.$store.state.settings.autoClose
+        })
       }
     }
   }

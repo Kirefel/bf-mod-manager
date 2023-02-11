@@ -6,6 +6,7 @@ export default createStore({
       steam: true,
       gamePath: "",
       modsPath: "",
+      autoClose: true,
       debugMode: false,
       modsSource: "https://github.com/Kirefel/OriDeMods/index.json"
     },
