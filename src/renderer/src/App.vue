@@ -30,7 +30,7 @@
       </q-list>
     </q-page-container>
 
-    <q-footer elevated class="bg-grey-8 text-white">
+    <q-footer elevated class="text-white">
       <q-toolbar>
         <q-space />
         <q-btn color="green" :loading="$store.getters.anyDownloads" @click="launch" :disable="launchNotConfigured" :title="launchNotConfigured ? 'Open settings to configure launch' : ''">
@@ -134,4 +134,11 @@ export default {
 body {
   user-select: none;
 }
+
+footer {
+  background: linear-gradient(0deg, rgba(36,31,87,1) 0%, rgba(36,31,86,1) 100%);
+}
+// header {
+//   background: linear-gradient(0deg, rgba(216,92,46,1) 0%, rgba(249,142,88,1) 100%);
+// }
 </style>
