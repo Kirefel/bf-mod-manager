@@ -1,6 +1,6 @@
 <template>
   <q-item>
-    <q-item-section side top>
+    <q-item-section side top v-if="isInstalled">
       <q-checkbox :disable="mod.required || !isInstalled" v-model="enabled" />
     </q-item-section>
     <q-item-section>
@@ -9,7 +9,7 @@
     </q-item-section>
     <q-item-section side>
       <q-btn-group flat>
-        <q-icon v-if="isInstalled" class="downloaded-icon" name="done" title="Up to date" />
+        <!-- <q-icon v-if="isInstalled" class="downloaded-icon" name="done" title="Up to date" /> -->
         <q-btn v-if="!isInstalled" icon="file_download" title="Download" @click="download" :loading="$store.getters.isDownloading(modID)">
           <q-badge v-if="modID === 'ModLoader'" floating rounded color="blue">
             <!-- <q-icon name="info" /> -->

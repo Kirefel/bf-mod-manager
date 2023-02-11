@@ -20,6 +20,9 @@ export default createStore({
     },
     isDownloading: state => id => {
       return state.inProgressDownloads.indexOf(id) !== -1
+    },
+    isInstalled: state => id => {
+      return state.installed[id] !== undefined
     }
   },
   mutations: {

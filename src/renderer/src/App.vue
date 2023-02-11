@@ -20,7 +20,12 @@
         </q-inner-loading>
 
         <div v-if="!$store.state.loading">
-          <mod-item v-for="id in Object.keys($store.state.modList)" :key="id" :modID="id" />
+          <q-item-label header>Installed</q-item-label>
+          <q-separator spaced />
+          <mod-item v-for="id in installedMods" :key="id" :modID="id" />
+          <q-item-label header>Available</q-item-label>
+          <q-separator spaced />
+          <mod-item v-for="id in availableMods" :key="id" :modID="id" />
         </div>
       </q-list>
     </q-page-container>
@@ -75,6 +80,15 @@ export default {
     window.ipc.send('LOAD_SETTINGS')
   },
 
+  computed: {
+    installedMods() {
+      return Object.keys(this.$store.state.modList).filter(x => this.$store.getters.isInstalled(x))
+    },
+    availableMods() {
+      return Object.keys(this.$store.state.modList).filter(x => !this.$store.getters.isInstalled(x))
+    }
+  },
+
   methods: {
     saveSettings() {
       this.$store.dispatch('saveSettings')
@@ -104,5 +118,8 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
+body {
+  user-select: none;
+}
 </style>
