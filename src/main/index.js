@@ -13,6 +13,11 @@ function createWindow() {
     height: 670,
     show: false,
     autoHideMenuBar: true,
+    titleBarStyle: 'hidden',
+    titleBarOverlay: {
+      color: '#1976D2',
+      symbolColor: '#ffffff'
+    },
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       nodeIntegration: false,

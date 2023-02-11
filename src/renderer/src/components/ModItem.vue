@@ -1,7 +1,7 @@
 <template>
   <q-item>
     <q-item-section side top v-if="isInstalled">
-      <q-checkbox :disable="mod.required || !isInstalled" v-model="enabled" />
+      <q-checkbox :disable="mod.required" v-model="enabled" :title="mod.required ? 'This mod is required and can\'t be disabled': ''" />
     </q-item-section>
     <q-item-section>
       <q-item-label>{{ mod.name }}</q-item-label>

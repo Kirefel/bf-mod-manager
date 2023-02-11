@@ -187,17 +187,6 @@ export default createStore({
               }
             ]
           },
-          RandoBeta: {
-            name: "Rando Beta",
-            description: "Upcoming rando releases. Don't use alongside the release version of rando.",
-            url: "https://github.com/ori-community/bf-modloader",
-            versions: [
-              {
-                "version": "0.6.0-alpha",
-                "url": "https://github.com/ori-community/bf-modloader/releases/download/v0.6.0-alpha/OriDeModLoader.zip"
-              }
-            ]
-          },
           SceneExplorer: {
             name: "Scene Explorer",
             description: "A utility for exploring the Unity objects and components",

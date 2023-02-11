@@ -1,10 +1,11 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <q-header elevated class="bg-primary text-white">
+    <q-header elevated class="bg-primary text-white q-electron-drag">
       <q-toolbar>
         <q-toolbar-title>Ori and the Blind Forest Mod Manager</q-toolbar-title>
         <q-btn icon="refresh" flat round title="Refresh" @click="refresh" :disable="$store.state.loading" />
         <q-btn icon="settings" flat round title="Open Settings" @click="settingsVisible = true" />
+        <span style="width: 150px" />
       </q-toolbar>
     </q-header>
 
@@ -125,7 +126,21 @@ export default {
           autoClose: this.$store.state.settings.autoClose
         })
       }
+    },
+
+
+    minimize () {
+        window.windowApi.minimize()
+    },
+
+    toggleMaximize () {
+        window.windowApi.toggleMaximize()
+    },
+
+    closeApp () {
+        window.windowApi.close()
     }
+
   }
 }
 </script>
