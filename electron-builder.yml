@@ -1,5 +1,5 @@
-appId: com.electron.app
-productName: ori-launcher
+appId: com.kirefel.obfmodmanager
+productName: Ori and the Blind Forest Mod Manager
 directories:
   buildResources: build
 files:
@@ -11,7 +11,7 @@ asarUnpack:
   - resources/*
 afterSign: build/notarize.js
 win:
-  executableName: ori-launcher
+  executableName: ori-bf-mod-manager
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
@@ -19,11 +19,7 @@ nsis:
   createDesktopShortcut: always
 mac:
   entitlementsInherit: build/entitlements.mac.plist
-  extendInfo:
-    - NSCameraUsageDescription: Application requests access to the device's camera.
-    - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
-    - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
-    - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
+  extendInfo: {}
 dmg:
   artifactName: ${name}-${version}.${ext}
 linux:
