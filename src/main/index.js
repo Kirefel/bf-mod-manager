@@ -168,7 +168,9 @@ ipcMain.on('LAUNCH', (event, { exePath, modsPath, autoClose }) => {
   })
 
   if (autoClose) {
-    app.quit()
+    setTimeout(() => {
+      app.quit()
+    }, 5000);
   }
 })
 
