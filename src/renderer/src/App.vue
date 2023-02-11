@@ -72,21 +72,13 @@ export default {
   },
 
   mounted() {
-    window.ipc.on('LOAD_SETTINGS', payload => {
+    window.ipc.invoke('LOAD_SETTINGS').then(payload => {
       if (payload !== null) {
         this.$store.commit('setAllSettings', payload)
       }
 
       this.refresh()
     })
-
-    window.ipc.on('LOAD_MOD_STATE', payload => {
-      if (payload !== null) {
-        this.$store.commit('setInstallState', payload)
-      }
-    })
-
-    window.ipc.send('LOAD_SETTINGS')
   },
 
   computed: {
@@ -108,7 +100,12 @@ export default {
     },
     refresh() {
       // TODO default value for mod install path
-      window.ipc.send('LOAD_MOD_STATE', this.$store.state.settings.modsPath)
+      window.ipc.invoke('LOAD_MOD_STATE', this.$store.state.settings.modsPath).then(payload => {
+        if (payload !== null) {
+          this.$store.commit('setInstallState', payload)
+        }
+      })
+
       this.$store.dispatch('loadList')
     },
     launch() {

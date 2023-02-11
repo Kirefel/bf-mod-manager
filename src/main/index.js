@@ -81,15 +81,19 @@ app.on('window-all-closed', () => {
 // code. You can also put them in separate files and require them here.
 const { ipcMain, dialog } = require('electron');
 
-ipcMain.on('OPEN_FILE_DIALOG', event => {
-  dialog.showOpenDialog({ properties: ['openFile']}).then(x => {
-    event.reply('OPEN_FILE_DIALOG', { ...x });
+ipcMain.handle('OPEN_FILE_DIALOG', event => {
+  return new Promise(resolve => {
+    dialog.showOpenDialog({ properties: ['openFile']}).then(x => {
+      resolve({ ...x });
+    })
   })
 });
 
-ipcMain.on('OPEN_FOLDER_DIALOG', event => {
-  dialog.showOpenDialog({ properties: ['openDirectory']}).then(x => {
-    event.reply('OPEN_FOLDER_DIALOG', { ...x });
+ipcMain.handle('OPEN_FOLDER_DIALOG', event => {
+  return new Promise(resolve => {
+    dialog.showOpenDialog({ properties: ['openDirectory']}).then(x => {
+      resolve({ ...x });
+    })
   })
 });
 
@@ -102,15 +106,17 @@ ipcMain.on('SAVE_SETTINGS', (event, data) => {
   })
 })
 
-ipcMain.on('LOAD_SETTINGS', event => {
+ipcMain.handle('LOAD_SETTINGS', event => {
   const path = join(app.getPath('userData'), 'config.json')
-  readFile(path, (err, data) => {
-    if (!err && data) {
-      const json = JSON.parse(data.toString())
-      event.reply('LOAD_SETTINGS', json)
-    } else {
-      event.reply('LOAD_SETTINGS', null)
-    }
+  return new Promise(resolve => {
+    readFile(path, (err, data) => {
+      if (!err && data) {
+        const json = JSON.parse(data.toString())
+        resolve(json)
+      } else {
+        resolve(null)
+      }
+    })
   })
 })
 
@@ -123,15 +129,19 @@ ipcMain.on('SAVE_MOD_STATE', (event, { path, data }) => {
   })
 })
 
-ipcMain.on('LOAD_MOD_STATE', (event, path) => {
+ipcMain.handle('LOAD_MOD_STATE', (event, path) => {
   const file = join(path, 'manifest.json')
-  readFile(file, (err, data) => {
-    if (!err && data) {
-      const json = JSON.parse(data.toString())
-      event.reply('LOAD_MOD_STATE', json)
-    } else {
-      event.reply('LOAD_MOD_STATE', null)
-    }
+
+  return new Promise(resolve => {
+    readFile(file, (err, data) => {
+      if (!err && data) {
+        const json = JSON.parse(data.toString())
+        resolve(json)
+      } else {
+        resolve(null)
+      }
+    })
+
   })
 })
 

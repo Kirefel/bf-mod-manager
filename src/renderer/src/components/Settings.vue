@@ -59,27 +59,22 @@ export default {
     }
   },
 
-  mounted() {
-    window.ipc.on('OPEN_FILE_DIALOG', payload => {
-      if (payload.canceled || payload.filePaths === undefined || payload.filePaths.length === 0)
-        return;
-      
-      this.gamePath = payload.filePaths[0];
-    })
-    window.ipc.on('OPEN_FOLDER_DIALOG', payload => {
-      if (payload.canceled || payload.filePaths === undefined || payload.filePaths.length === 0)
-        return;
-      
-      this.modsPath = payload.filePaths[0];
-    })
-  },
-
   methods: {
     browseFile() {
-      window.ipc.send('OPEN_FILE_DIALOG')
+      window.ipc.invoke('OPEN_FILE_DIALOG').then(payload => {
+        if (payload.canceled || payload.filePaths === undefined || payload.filePaths.length === 0)
+          return;
+        
+        this.gamePath = payload.filePaths[0];
+      })
     },
     browseFolder() {
-      window.ipc.send('OPEN_FOLDER_DIALOG')
+      window.ipc.invoke('OPEN_FOLDER_DIALOG').then(payload => {
+        if (payload.canceled || payload.filePaths === undefined || payload.filePaths.length === 0)
+          return;
+        
+        this.modsPath = payload.filePaths[0];
+      })
     }
   }
 }
