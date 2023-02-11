@@ -6,6 +6,7 @@ import { createWriteStream, existsSync, readFile, writeFile, rmSync } from 'fs'
 import decompress from 'decompress'
 import { get } from 'https'
 import { autoUpdater } from 'electron-updater'
+import { execFile } from 'child_process'
 
 function createWindow() {
   // Create the browser window.
@@ -153,9 +154,18 @@ ipcMain.handle('LOAD_MOD_STATE', (event, path) => {
 ipcMain.on('LAUNCH', (event, { exePath, modsPath, autoClose }) => {
   const injectorExe = join(modsPath, 'ModLoader', 'Injector.exe')
 
-  const command = `"${injectorExe}" -launch "${exePath}"`
+  const command = `"${injectorExe}" "${exePath}"`
 
   console.log(`Executing ${command}`)
+
+  var proc = execFile(injectorExe, [ exePath ], {
+    cwd: join(modsPath, 'ModLoader')
+  })
+
+  // TODO if debug mode, attach stdout and log
+  proc.stdout.on('data', s => {
+    console.log(s)
+  })
 
   if (autoClose) {
     app.quit()
