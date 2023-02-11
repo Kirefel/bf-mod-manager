@@ -5,6 +5,7 @@ import icon from '../../resources/icon.png?asset'
 import { createWriteStream, existsSync, readFile, writeFile, rmSync } from 'fs'
 import decompress from 'decompress'
 import { get } from 'https'
+import { autoUpdater } from 'electron-updater'
 
 function createWindow() {
   // Create the browser window.
@@ -44,6 +45,10 @@ function createWindow() {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 }
+
+app.on('ready', () => {
+  autoUpdater.checkForUpdatesAndNotify()
+})
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

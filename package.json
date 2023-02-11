@@ -1,7 +1,7 @@
 {
   "name": "ori-bf-mod-manager",
   "displayName": "Ori and the Blind Forest Mod Manager",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Mod manager for Ori and the Blind Forest Definitive Edition",
   "main": "./out/main/index.js",
   "author": "Kirefel",
@@ -13,7 +13,7 @@
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "postinstall": "electron-builder install-app-deps",
-    "build:win": "npm run build && electron-builder --win --config -p always",
+    "build:win": "npm run build && electron-builder --win --config",
     "build:mac": "npm run build && electron-builder --mac --config",
     "build:linux": "npm run build && electron-builder --linux --config"
   },
