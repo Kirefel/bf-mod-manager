@@ -48,6 +48,8 @@ export default createStore({
           enabled: id === "ModLoader",
           version
         }
+      } else if (installed) {
+        state.installed[id].version = version
       } else {
         delete state.installed[id]
       }

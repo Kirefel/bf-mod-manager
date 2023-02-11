@@ -9,10 +9,8 @@
     </q-item-section>
     <q-item-section side>
       <q-btn-group flat>
-        <q-btn v-if="!isInstalled" icon="file_download" title="Download" @click="download" :loading="$store.getters.isDownloading(modID)">
-          <q-badge v-if="modID === 'ModLoader'" floating rounded color="blue">
-            <!-- <q-icon name="info" /> -->
-          </q-badge>
+        <q-btn v-if="!isInstalled || !upToDate" icon="file_download" :title="upToDate ? 'Download' : 'Update available'" @click="download" :loading="$store.getters.isDownloading(modID)">
+          <q-badge v-if="!upToDate" floating rounded color="blue" />
         </q-btn>
         <q-btn icon="delete" title="Uninstall mod" v-if="isInstalled" @click="deleteDialog = true" />
         <q-btn icon="launch" :title="mod.url" :href="mod.url" target="_blank" />
@@ -37,6 +35,7 @@
 
 <script>
 import { ref } from 'vue'
+import { age } from '../modFuncs'
 
 export default {
   name: 'mod-item',
@@ -79,7 +78,10 @@ export default {
       }
     },
     upToDate() {
-      return this.isInstalled;
+      if (!this.isInstalled)
+        return true
+      
+      return age(this.mod, this.install.version) === 0
     }
   }
 }
