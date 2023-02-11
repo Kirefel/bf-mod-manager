@@ -14,21 +14,29 @@
     </q-dialog>
 
     <q-page-container>
-      <q-list bordered separator>
+      <q-page class="row no-wrap">
+        <div class="col">
+          <div class="column full-height">
+            <q-scroll-area class="col" style="padding:0;">
+              <q-list bordered separator>
 
-        <q-inner-loading :showing="$store.state.loading">
-          <q-spinner size="50px" color="primary" />
-        </q-inner-loading>
+                <q-inner-loading :showing="$store.state.loading">
+                  <q-spinner size="50px" color="primary" />
+                </q-inner-loading>
 
-        <div v-if="!$store.state.loading">
-          <q-item-label header>Installed</q-item-label>
-          <q-separator spaced />
-          <mod-item v-for="id in installedMods" :key="id" :modID="id" />
-          <q-item-label header>Available</q-item-label>
-          <q-separator spaced />
-          <mod-item v-for="id in availableMods" :key="id" :modID="id" />
+                <div v-if="!$store.state.loading">
+                  <q-item-label header>Installed</q-item-label>
+                  <q-separator spaced />
+                  <mod-item v-for="id in installedMods" :key="id" :modID="id" />
+                  <q-item-label header>Available</q-item-label>
+                  <q-separator spaced />
+                  <mod-item v-for="id in availableMods" :key="id" :modID="id" />
+                </div>
+              </q-list>
+            </q-scroll-area>
+          </div>
         </div>
-      </q-list>
+      </q-page>
     </q-page-container>
 
     <q-footer elevated class="text-white">
