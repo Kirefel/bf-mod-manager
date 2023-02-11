@@ -9,20 +9,35 @@
     </q-item-section>
     <q-item-section side>
       <q-btn-group flat>
-        <!-- <q-icon v-if="isInstalled" class="downloaded-icon" name="done" title="Up to date" /> -->
         <q-btn v-if="!isInstalled" icon="file_download" title="Download" @click="download" :loading="$store.getters.isDownloading(modID)">
           <q-badge v-if="modID === 'ModLoader'" floating rounded color="blue">
             <!-- <q-icon name="info" /> -->
           </q-badge>
         </q-btn>
+        <q-btn icon="delete" title="Uninstall mod" v-if="isInstalled" @click="deleteDialog = true" />
         <q-btn icon="launch" :title="mod.url" :href="mod.url" target="_blank" />
       </q-btn-group>
     </q-item-section>
+
+    <q-dialog v-model="deleteDialog">
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="warning" color="negative" text-color="white" />
+          <span class="q-ml-sm">Are you sure you wish to delete {{ mod.name }}?</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Delete" color="negative" v-close-popup @click="uninstall" />
+          <q-btn flat label="Cancel" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-item>
 </template>
 
 <script>
-// TODO delete mods from disk with a button
+import { ref } from 'vue'
+
 export default {
   name: 'mod-item',
 
@@ -30,9 +45,18 @@ export default {
     modID: String
   },
 
+  setup() {
+    return {
+      deleteDialog: ref(false)
+    }
+  },
+
   methods: {
     download() {
       this.$store.dispatch('installMod', { id: this.modID, version: 'latest' })
+    },
+    uninstall() {
+      this.$store.dispatch('uninstallMod', this.modID)
     }
   },
 

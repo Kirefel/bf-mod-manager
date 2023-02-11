@@ -207,3 +207,16 @@ ipcMain.handle('DOWNLOAD_TO_DIRECTORY', (event, { downloadUrl, modsPath, modName
     })
   })
 })
+
+ipcMain.handle('DELETE_MOD', (event, { modsPath, modName }) => {
+  const modDir = join(modsPath, modName)
+  return new Promise((resolve) => {
+
+    if (existsSync(modDir)) {
+      console.log('Removing ' + modDir)
+      rmSync(modDir, { recursive: true, force: true })
+    }
+
+    resolve()
+  })
+})

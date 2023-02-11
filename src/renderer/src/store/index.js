@@ -110,6 +110,20 @@ export default createStore({
         })
       })
     },
+    uninstallMod(context, id) {
+      context.commit('setInstalling', { id, value: true })
+      return new Promise((resolve) => {
+        window.ipc.invoke('DELETE_MOD', {
+          modsPath: context.state.settings.modsPath,
+          modName: id
+        }).then(() => {
+          context.commit('setInstalling', { id, value: false })
+          context.commit('setInstalled', { id, installed: false })
+          context.dispatch('saveInstallState')
+          resolve()
+        })
+      })
+    },
     loadList(context) {
       console.log(`Beginning load from ${context.state.settings.modsSource}`)
       context.commit('setLoading', true);
