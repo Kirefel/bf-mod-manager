@@ -1,0 +1,17 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - run: npm ci
+    - run: npm run build:win
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}

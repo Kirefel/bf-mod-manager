@@ -1,10 +1,11 @@
 {
-  "name": "ori-launcher",
-  "version": "1.0.0",
-  "description": "An Electron application with Vue",
+  "name": "ori-bf-mod-manager",
+  "displayName": "Ori and the Blind Forest Mod Manager",
+  "version": "0.4.0",
+  "description": "Mod manager for Ori and the Blind Forest Definitive Edition",
   "main": "./out/main/index.js",
-  "author": "example.com",
-  "homepage": "https://www.electronjs.org",
+  "author": "Kirefel",
+  "homepage": "https://github.com/Kirefel/bf-mod-manager",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
@@ -20,8 +21,10 @@
     "@electron-toolkit/preload": "^1.0.3",
     "@electron-toolkit/utils": "^1.0.2",
     "@quasar/extras": "^1.15.10",
+    "decompress": "^4.2.1",
     "electron-updater": "^5.3.0",
     "quasar": "^2.11.5",
+    "tmp": "^0.2.1",
     "vuex": "^4.1.0"
   },
   "devDependencies": {

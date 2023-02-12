@@ -1,4 +1,4 @@
-# ori-launcher
+# ori-bf-mod-manager
 
 An Electron application with Vue
 

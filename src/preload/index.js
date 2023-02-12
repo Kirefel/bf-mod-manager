@@ -25,7 +25,11 @@ const validChannels = [
   'SAVE_SETTINGS',
   'LOAD_SETTINGS',
   'SAVE_MOD_STATE',
-  'LOAD_MOD_STATE'
+  'LOAD_MOD_STATE',
+  'DOWNLOAD_TO_DIRECTORY',
+  'DELETE_MOD',
+  'LAUNCH',
+  'DOWNLOAD_MODLIST'
 ];
 contextBridge.exposeInMainWorld(
   'ipc', {

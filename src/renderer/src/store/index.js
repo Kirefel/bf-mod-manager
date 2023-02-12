@@ -3,11 +3,12 @@ import { createStore } from 'vuex'
 export default createStore({
   state: {
     settings: {
-      steam: false,
+      steam: true,
       gamePath: "",
       modsPath: "",
+      autoClose: true,
       debugMode: false,
-      modsSource: "https://github.com/Kirefel/OriDeMods/index.json"
+      modsSource: "https://raw.githubusercontent.com/Kirefel/ori-bf-mod-index/main/mods.json"
     },
     loading: false,
     modList: { },
@@ -20,6 +21,9 @@ export default createStore({
     },
     isDownloading: state => id => {
       return state.inProgressDownloads.indexOf(id) !== -1
+    },
+    isInstalled: state => id => {
+      return state.installed[id] !== undefined
     }
   },
   mutations: {
@@ -38,11 +42,14 @@ export default createStore({
     setInstallState(state, value) {
       state.installed = value
     },
-    setInstalled(state, { id, installed }) {
+    setInstalled(state, { id, installed, version }) {
       if (state.installed[id] === undefined && installed) {
         state.installed[id] = {
-          enabled: id === "ModLoader"
+          enabled: id === "ModLoader",
+          version
         }
+      } else if (installed) {
+        state.installed[id].version = version
       } else {
         delete state.installed[id]
       }
@@ -72,76 +79,63 @@ export default createStore({
   actions: {
     installMod(context, { id, version }) {
       
-      const modInfo = this.state.modList[id]
+      const modInfo = context.state.modList[id]
       if (modInfo === undefined) {
         return
       }
       
-      this.commit('setInstalling', { id, value: true })
+      context.commit('setInstalling', { id, value: true })
       console.log(`Installing ${modInfo.name}`)
 
-      return new Promise(resolve => {
-        setTimeout(() => {
-          this.commit('setInstalling', { id, value: false })
-          this.commit('setInstalled', { id, installed: true })
-          
-          this.dispatch('saveInstallState')
+      const versionID = version !== 'latest' ? version : modInfo.versions[0].version
 
+      return new Promise((resolve, reject) => {
+        window.ipc.invoke('DOWNLOAD_TO_DIRECTORY', { 
+          downloadUrl: modInfo.versions.find(v => v.version == versionID).url,
+          modsPath: context.state.settings.modsPath,
+          modName: id
+        }).then(() => {
+          context.commit('setInstalling', { id, value: false })
+          context.commit('setInstalled', { id, installed: true, version: versionID })
+          
+          context.dispatch('saveInstallState')
+  
           resolve()
-        }, 5000);
+        }).catch(err => {
+          context.commit('setInstalling', { id, value: false })
+  
+          reject(err)
+        })
+      })
+    },
+    uninstallMod(context, id) {
+      context.commit('setInstalling', { id, value: true })
+      return new Promise((resolve) => {
+        window.ipc.invoke('DELETE_MOD', {
+          modsPath: context.state.settings.modsPath,
+          modName: id
+        }).then(() => {
+          context.commit('setInstalling', { id, value: false })
+          context.commit('setInstalled', { id, installed: false })
+          context.dispatch('saveInstallState')
+          resolve()
+        })
       })
     },
     loadList(context) {
       console.log(`Beginning load from ${context.state.settings.modsSource}`)
-      this.commit('setLoading', true);
+      context.commit('setLoading', true);
       
-      setTimeout(() => {
-        this.commit('setModList', {
-          ModLoader: {
-            name: "Mod Loader",
-            description: "(Required) Enables modding of the game",
-            required: true,
-            url: "https://github.com/ori-community/bf-modloader"
-          },
-          QoL: {
-            name: "Quality of Life",
-            description: "Adds many QoL and accessibility features such as screen shake reduction and more save slots",
-            url: "https://github.com/Kirefel/OriDeQol"
-          },
-          InputConfig: {
-            name: "Input Binding",
-            description: "Adds input binding in-game and also allows rebinding controllers",
-            url: "https://github.com/Kirefel/OriDeInputMod"
-          },
-          DebugEnhanced: {
-            name: "Enhanced Debug",
-            description: "Adds more debug features",
-            url: "https://github.com/ori-community/bf-modloader"
-          },
-          Rando: {
-            name: "Rando",
-            description: "You know what this is",
-            url: "https://github.com/ori-community/bf-modloader"
-          },
-          RandoBeta: {
-            name: "Rando Beta",
-            description: "Upcoming rando releases. Don't use alongside the release version of rando.",
-            url: "https://github.com/ori-community/bf-modloader"
-          },
-          SceneExplorer: {
-            name: "Scene Explorer",
-            description: "A utility for exploring the Unity objects and components",
-            url: "https://github.com/Kirefel/OriSceneExplorer"
-          },
-          SRDC: {
-            name: "Speedrun.com",
-            description: "Replaces the in-game leaderboards with ones sourced from speedrun.com",
-            url: "https://github.com/Kirefel/OriDeSRDC"
-          }
-        })
-        
-        this.commit('setLoading', false);
-      }, 500);
+      // fetch(context.state.settings.modsSource).then(res => res.json()).then(list => {
+      window.ipc.invoke('DOWNLOAD_MODLIST', {
+        url: context.state.settings.modsSource
+      }).then(list => {
+        context.commit('setModList', list)
+        context.commit('setLoading', false)
+      }).catch(() => {
+        context.commit('setModList', {})
+        context.commit('setLoading', false)
+      })
     },
     saveSettings(context) {
       console.log('saving the settings!')
@@ -149,7 +143,7 @@ export default createStore({
     },
     saveInstallState(context) {
       console.log('saving the installed mods!')
-      window.ipc.send('SAVE_MOD_STATE', { path: this.state.settings.modsPath, data: JSON.parse(JSON.stringify(this.state.installed)) })
+      window.ipc.send('SAVE_MOD_STATE', { path: context.state.settings.modsPath, data: JSON.parse(JSON.stringify(context.state.installed)) })
     }
   }
 })
