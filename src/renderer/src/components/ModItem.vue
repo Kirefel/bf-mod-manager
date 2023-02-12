@@ -30,6 +30,35 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+
+    <q-menu touch-position context-menu v-if="!$store.getters.isDownloading(modID)">
+      <q-list dense>
+        <q-item clickable v-close-popup v-if="!isInstalled" @click="download">
+          <q-item-section>Install latest</q-item-section>
+        </q-item>
+        <q-item clickable v-close-popup v-if="isInstalled && !upToDate">
+          <q-item-section>Install update</q-item-section>
+        </q-item>
+        <q-item clickable v-close-popup @click="downloadVersionDialog = true">
+          <q-item-section>Install version...</q-item-section>
+        </q-item>
+        <q-item clickable v-close-popup v-if="isInstalled" @click="deleteDialog = true">
+          <q-item-section>Uninstall</q-item-section>
+        </q-item>
+        <q-separator />
+        <q-item clickable v-close-popup :href="mod.url" target="_blank">
+          <q-item-section>Open in browser</q-item-section>
+        </q-item>
+      </q-list>
+    </q-menu>
+
+    <q-dialog v-model="downloadVersionDialog">
+      <q-card class="download-dialog">
+        <q-card-section>
+          <q-select label="Version" :options="availableVersions" v-model="selectedVersion" />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-item>
 </template>
 
@@ -48,6 +77,8 @@ export default {
   setup() {
     return {
       deleteDialog: ref(false),
+      downloadVersionDialog: ref(false),
+      selectedVersion: ref(null),
       $q: useQuasar()
     }
   },
@@ -90,6 +121,9 @@ export default {
         return true
       
       return age(this.mod, this.install.version) === 0
+    },
+    availableVersions() {
+      return this.mod.versions.map(x => x.version)
     }
   }
 }
@@ -99,5 +133,11 @@ export default {
   font-size: 1.715em;
   top: 7px;
   right: 16px;
+}
+
+.download-dialog {
+  padding: 10px;
+  width: 700px;
+  max-width: 80vw;
 }
 </style>
