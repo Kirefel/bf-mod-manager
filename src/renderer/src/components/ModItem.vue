@@ -9,7 +9,7 @@
     </q-item-section>
     <q-item-section side>
       <q-btn-group flat>
-        <q-btn v-if="!isInstalled || !upToDate" icon="file_download" :title="upToDate ? 'Download' : 'Update available'" @click="download" :loading="$store.getters.isDownloading(modID)">
+        <q-btn v-if="!isInstalled || !upToDate" icon="file_download" :title="upToDate ? 'Download' : 'Update available'" @click="download('latest')" :loading="$store.getters.isDownloading(modID)">
           <q-badge v-if="!upToDate" floating rounded color="blue" />
         </q-btn>
         <q-btn icon="delete" title="Uninstall mod" v-if="isInstalled" @click="deleteDialog = true" />
@@ -33,7 +33,7 @@
 
     <q-menu touch-position context-menu v-if="!$store.getters.isDownloading(modID)">
       <q-list dense>
-        <q-item clickable v-close-popup v-if="!isInstalled" @click="download">
+        <q-item clickable v-close-popup v-if="!isInstalled" @click="download('latest')">
           <q-item-section>Install latest</q-item-section>
         </q-item>
         <q-item clickable v-close-popup v-if="isInstalled && !upToDate">
@@ -57,6 +57,10 @@
         <q-card-section>
           <q-select label="Version" :options="availableVersions" v-model="selectedVersion" />
         </q-card-section>
+        <q-card-actions align="right" class="text-primary">
+          <q-btn flat label="Cancel" v-close-popup />
+          <q-btn flat label="Install" v-close-popup :disable="selectedVersion === null" @click="download(selectedVersion)" />
+        </q-card-actions>
       </q-card>
     </q-dialog>
   </q-item>
@@ -84,8 +88,8 @@ export default {
   },
 
   methods: {
-    download() {
-      this.$store.dispatch('installMod', { id: this.modID, version: 'latest' })
+    download(selected) {
+      this.$store.dispatch('installMod', { id: this.modID, version: selected })
         .catch(err => {
           this.$q.notify({ 
             type: 'negative',
@@ -137,7 +141,7 @@ export default {
 
 .download-dialog {
   padding: 10px;
-  width: 700px;
+  width: 300px;
   max-width: 80vw;
 }
 </style>
