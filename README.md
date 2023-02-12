@@ -1,10 +1,27 @@
-# ori-bf-mod-manager
+# Ori and the Blind Forest Mod Manager
 
-An Electron application with Vue
+A mod manager and launcher for Ori and the Blind Forest Definitive Edition
 
-## Recommended IDE Setup
+## Features
 
-- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+* List all available mods
+* Streamlined installation and updating of mods
+* Install any previous mod versions
+* Launch the game with mods enabled using Steam or standalone
+
+## Getting Started
+
+Download the latest version from [releases](https://github.com/Kirefel/bf-mod-manager/releases/latest). It will keep itself up to date automatically.
+
+Upon launching you will need to configure some settings. Click the gear in the top right corner to set the install directory for mods.
+
+On the main screen you can download any mod by clicking the download button, and then enable them by checking the box.
+
+To install an earlier version of a mod, right click the mod and select "Install version..."
+
+## Mod list source
+
+By default mod information is pulled from https://github.com/Kirefel/ori-bf-mod-index
 
 ## Project Setup
 
@@ -25,10 +42,3 @@ $ npm run dev
 ```bash
 # For windows
 $ npm run build:win
-
-# For macOS
-$ npm run build:mac
-
-# For Linux
-$ npm run build:linux
-```

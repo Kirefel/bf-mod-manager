@@ -42,7 +42,7 @@
     <q-footer elevated class="text-white">
       <q-toolbar>
         <q-space />
-        <q-btn color="green" :loading="$store.getters.anyDownloads" @click="launch" :disable="launchNotConfigured" :title="launchNotConfigured ? 'Open settings to configure launch' : ''">
+        <q-btn color="green" :loading="$store.getters.anyDownloads" @click="clickLaunch" :disable="launchNotConfigured" :title="launchNotConfigured ? 'Open settings to configure launch' : ''">
           <span>Launch</span>
           <template v-slot:loading>
             <q-spinner-dots />
@@ -108,7 +108,7 @@ export default {
 
       this.$store.dispatch('loadList')
     },
-    launch() {
+    clickLaunch() {
       // if mod loader is not installed, do it now
       // then do the actual launch
       if (this.$store.state.installed.ModLoader === undefined) {
@@ -120,38 +120,21 @@ export default {
             })
           })
           .then(() => {
-            this.$store.dispatch('saveInstallState')
-            console.log("LAUNCHING!")
-            window.ipc.send('LAUNCH', {
-              exePath: this.$store.state.settings.steam ? 'steam://run/387290' : this.$store.state.settings.gamePath,
-              modsPath: this.$store.state.settings.modsPath,
-              autoClose: this.$store.state.settings.autoClose
-            })
+            this.launch()
           })
       } else {
-        this.$store.dispatch('saveInstallState')
-        console.log("LAUNCHING!")
-        window.ipc.send('LAUNCH', {
-          exePath: this.$store.state.settings.steam ? 'steam://run/387290' : this.$store.state.settings.gamePath,
-          modsPath: this.$store.state.settings.modsPath,
-          autoClose: this.$store.state.settings.autoClose
-        })
+        this.launch()
       }
     },
-
-
-    minimize () {
-        window.windowApi.minimize()
-    },
-
-    toggleMaximize () {
-        window.windowApi.toggleMaximize()
-    },
-
-    closeApp () {
-        window.windowApi.close()
+    launch() {
+      this.$store.dispatch('saveInstallState')
+      console.log("LAUNCHING!")
+      window.ipc.send('LAUNCH', {
+        exePath: this.$store.state.settings.steam ? 'steam://run/387290' : this.$store.state.settings.gamePath,
+        modsPath: this.$store.state.settings.modsPath,
+        autoClose: this.$store.state.settings.autoClose
+      })
     }
-
   }
 }
 </script>
