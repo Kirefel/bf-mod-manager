@@ -119,9 +119,19 @@ ipcMain.handle('LOAD_SETTINGS', event => {
     readFile(path, (err, data) => {
       if (!err && data) {
         const json = JSON.parse(data.toString())
+        if (json.modsPath === '' || json.modsPath === undefined) {
+          json.modsPath = join(app.getPath('userData'), 'mods')
+        }
         resolve(json)
       } else {
-        resolve(null)
+        resolve({
+          steam: true,
+          gamePath: "",
+          modsPath: join(app.getPath('userData'), 'mods'),
+          autoClose: true,
+          debugMode: false,
+          modsSource: "https://raw.githubusercontent.com/Kirefel/ori-bf-mod-index/main/mods.json"
+        })
       }
     })
   })
@@ -203,6 +213,11 @@ ipcMain.handle('DOWNLOAD_TO_DIRECTORY', (event, { downloadUrl, modsPath, modName
   console.log(`Will download ${downloadUrl} to ${outputDir}`)
   
   return new Promise((resolve, reject) => {
+
+    if (modsPath === '') {
+      reject('Configure "Mods Directory" in the settings')
+      return
+    }
 
     tmp.file((err, path, fd, removeCallback) => {
 
