@@ -20,6 +20,7 @@ function createWindow() {
       color: '#1976D2',
       symbolColor: '#ffffff'
     },
+    trafficLightPosition: { x: 10, y: 17 },
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       nodeIntegration: false,

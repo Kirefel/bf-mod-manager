@@ -2,11 +2,12 @@
   <q-layout view="hHh lpR fFf">
     <q-header elevated class="bg-primary text-white q-electron-drag">
       <q-toolbar>
+        <span style="width: 65px" v-if="platform == 'darwin'" />
         <avatar-icon />
         <q-toolbar-title>Ori and the Blind Forest Mod Manager</q-toolbar-title>
         <q-btn icon="refresh" flat round title="Refresh" @click="refresh" :disable="$store.state.loading" />
         <q-btn icon="settings" flat round title="Open Settings" @click="settingsVisible = true" />
-        <span style="width: 150px" />
+        <span style="width: 150px" v-if="platform == 'win32'" />
       </q-toolbar>
     </q-header>
 
@@ -85,6 +86,9 @@ export default {
   },
 
   computed: {
+    platform() {
+      return window.api.platform()
+    },
     installedMods() {
       return Object.keys(this.$store.state.modList).filter(x => this.$store.getters.isInstalled(x))
     },
