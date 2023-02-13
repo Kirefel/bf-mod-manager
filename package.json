@@ -1,7 +1,7 @@
 {
   "name": "ori-bf-mod-manager",
   "displayName": "Ori and the Blind Forest Mod Manager",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "description": "Mod manager for Ori and the Blind Forest Definitive Edition",
   "main": "./out/main/index.js",
   "author": "Kirefel",
