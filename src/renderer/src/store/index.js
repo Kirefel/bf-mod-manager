@@ -45,7 +45,7 @@ export default createStore({
     setInstalled(state, { id, installed, version }) {
       if (state.installed[id] === undefined && installed) {
         state.installed[id] = {
-          enabled: id === "ModLoader",
+          enabled: true,
           version
         }
       } else if (installed) {
