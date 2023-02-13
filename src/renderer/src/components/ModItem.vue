@@ -4,7 +4,7 @@
       <q-checkbox :disable="mod.required" v-model="enabled" :title="mod.required ? 'This mod is required and can\'t be disabled': ''" />
     </q-item-section>
     <q-item-section>
-      <q-item-label>{{ mod.name }}</q-item-label>
+      <q-item-label>{{ mod.name }} <q-badge v-if="isInstalled" :label="install.version" rounded /></q-item-label>
       <q-item-label caption lines="2"> {{ mod.description }}</q-item-label>
     </q-item-section>
     <q-item-section side>
@@ -36,8 +36,11 @@
         <q-item clickable v-close-popup v-if="!isInstalled" @click="download('latest')">
           <q-item-section>Install latest</q-item-section>
         </q-item>
-        <q-item clickable v-close-popup v-if="isInstalled && !upToDate">
+        <q-item clickable v-close-popup v-if="isInstalled && !upToDate" @click="download('latest')">
           <q-item-section>Install update</q-item-section>
+        </q-item>
+        <q-item clickable v-close-popup v-if="isInstalled" @click="download(install.version)">
+          <q-item-section>Reinstall</q-item-section>
         </q-item>
         <q-item clickable v-close-popup @click="downloadVersionDialog = true">
           <q-item-section>Install version...</q-item-section>

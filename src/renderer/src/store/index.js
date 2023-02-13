@@ -1,4 +1,5 @@
 import { createStore } from 'vuex'
+import { latestReleasedVersion, isBeta } from '../modFuncs'
 
 export default createStore({
   state: {
@@ -85,9 +86,16 @@ export default createStore({
       }
       
       context.commit('setInstalling', { id, value: true })
-      console.log(`Installing ${modInfo.name}`)
+      
+      // Install latest version if currently on a beta version
+      //  otherwise only install the latest stable version
+      const versionID = version !== 'latest'
+         ? version
+         : context.state.installed[id] !== undefined && isBeta(context.state.installed[id].version)
+            ? modInfo.versions[0].version
+            : latestReleasedVersion(modInfo)
 
-      const versionID = version !== 'latest' ? version : modInfo.versions[0].version
+      console.log(`Installing ${modInfo.name} ${versionID}`)
 
       return new Promise((resolve, reject) => {
         window.ipc.invoke('DOWNLOAD_TO_DIRECTORY', { 
@@ -126,7 +134,6 @@ export default createStore({
       console.log(`Beginning load from ${context.state.settings.modsSource}`)
       context.commit('setLoading', true);
       
-      // fetch(context.state.settings.modsSource).then(res => res.json()).then(list => {
       window.ipc.invoke('DOWNLOAD_MODLIST', {
         url: context.state.settings.modsSource
       }).then(list => {
