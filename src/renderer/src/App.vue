@@ -2,6 +2,7 @@
   <q-layout view="hHh lpR fFf">
     <q-header elevated class="bg-primary text-white q-electron-drag">
       <q-toolbar>
+        <avatar-icon />
         <q-toolbar-title>Ori and the Blind Forest Mod Manager</q-toolbar-title>
         <q-btn icon="refresh" flat round title="Refresh" @click="refresh" :disable="$store.state.loading" />
         <q-btn icon="settings" flat round title="Open Settings" @click="settingsVisible = true" />
@@ -57,12 +58,14 @@
 <script>
 import ModItem from './components/ModItem.vue'
 import Settings from './components/Settings.vue'
+import AvatarIcon from './components/AvatarIcon.vue'
 import { ref } from 'vue'
 
 export default {
   components: {
     ModItem,
-    Settings
+    Settings,
+    AvatarIcon
   },
 
   setup() {

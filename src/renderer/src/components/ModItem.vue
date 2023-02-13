@@ -83,7 +83,7 @@ export default {
       deleteDialog: ref(false),
       downloadVersionDialog: ref(false),
       selectedVersion: ref(null),
-      $q: useQuasar()
+      quasar: useQuasar()
     }
   },
 
@@ -91,7 +91,7 @@ export default {
     download(selected) {
       this.$store.dispatch('installMod', { id: this.modID, version: selected })
         .catch(err => {
-          this.$q.notify({ 
+          this.quasar.notify({ 
             type: 'negative',
             message: 'Error downloading mod: ' + err
           })
