@@ -2,6 +2,8 @@
 
 A mod manager and launcher for Ori and the Blind Forest Definitive Edition
 
+![image](https://user-images.githubusercontent.com/89714086/218361521-f5a907eb-3ec3-4ada-bb8f-1d8503711dea.png)
+
 ## Features
 
 * List all available mods
