@@ -139,7 +139,8 @@ export default {
       window.ipc.send('LAUNCH', {
         exePath: this.$store.state.settings.steam ? 'steam://run/387290' : this.$store.state.settings.gamePath,
         modsPath: this.$store.state.settings.modsPath,
-        autoClose: this.$store.state.settings.autoClose
+        autoClose: this.$store.state.settings.autoClose,
+        debug: this.$store.state.settings.debugMode
       })
     }
   }

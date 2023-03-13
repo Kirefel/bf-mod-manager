@@ -162,14 +162,18 @@ ipcMain.handle('LOAD_MOD_STATE', (event, path) => {
   })
 })
 
-ipcMain.on('LAUNCH', (event, { exePath, modsPath, autoClose }) => {
+ipcMain.on('LAUNCH', (event, { exePath, modsPath, autoClose, debug }) => {
   const injectorExe = join(modsPath, 'ModLoader', 'Injector.exe')
 
-  const command = `"${injectorExe}" "${exePath}"`
+  let args = [ exePath ]
 
-  console.log(`Executing ${command}`)
+  if (debug) {
+    args.push('--debug')
+  }
 
-  var proc = execFile(injectorExe, [ exePath ], {
+  console.log(`Executing ${injectorExe} ${args}`)
+
+  var proc = execFile(injectorExe, args, {
     cwd: join(modsPath, 'ModLoader')
   })
 
