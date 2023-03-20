@@ -2,7 +2,7 @@ import { app, shell, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { createWriteStream, existsSync, readFile, writeFile, rmSync, copyFileSync } from 'fs'
+import { createWriteStream, existsSync, readFile, writeFile, rmSync, copyFileSync, readFileSync } from 'fs'
 import decompress from 'decompress'
 import { get } from 'https'
 import { autoUpdater } from 'electron-updater'
@@ -166,38 +166,89 @@ ipcMain.handle('LOAD_MOD_STATE', (event, path) => {
 ipcMain.on('LAUNCH', (event, { exePath, modsPath, autoClose, debug, doorstop }) => {
 
   if (doorstop) {
-    let gamePath = exePath
 
-    if (exePath.startsWith('steam://')) {
-      // get game path from registry
-      return;
-    }
-    
-    const winhttpSource = join(modsPath, 'ModLoader', 'winhttp.dll')
-    const winhttpDestination = join(gamePath, '../winhttp.dll')
-    if (!existsSync(winhttpDestination)) {
-      copyFileSync(winhttpSource, winhttpDestination)
-    }
+    const usingSteam = exePath.startsWith('steam://')
 
-    const modloaderPath = join(modsPath, 'ModLoader', 'OriDeModLoader.dll')
+    new Promise((resolve, reject) => {
+      if (usingSteam) {
+        // Find where the game is installed (it's defined in steam/steamapps/libraryfolders.vdf)
+        const registry = require('winreg')
+        const key = new registry({
+          hive: registry.HKLM,
+          arch: 'x86',
+          key: '\\SOFTWARE\\Valve\\Steam'
+        })
+        key.values((err, items) => {
+          if (err) {
+            reject(err)
+            throw err;
+          }
 
-    let args = [
-      "--doorstop-enabled", "true",
-      "--doorstop-target-assembly", modloaderPath
-    ]
+          const steamInstallPath = items.find(x => x.name === 'InstallPath').value
+          const vdf = join(steamInstallPath, 'steamapps', 'libraryfolders.vdf')
+  
+          const allFileContents = readFileSync(vdf, 'utf-8');
+          const lines = allFileContents.split(/\r?\n/)
+  
+          // Find the "path" field that most recently precedes the game install
+          var currentDir = ""
+          for (let line of lines) {
+            const match = [...line.matchAll(/.*"path".*"([^"]+)"/g)]
+            if (match.length > 0) {
+              currentDir = match[0][1]
+              continue
+            }
+  
+            if (line.includes("\"387290\"\t")) {
+              resolve(join(currentDir, 'steamapps/common/Ori DE/oriDE.exe'))
+              return
+            }
+          }
 
-    if (debug) {
-      args.push('--debug')
-    }
+          reject('game not installed via steam')
+        })
+      } else if (!existsSync(exePath)) {
+        reject(`File not found: ${exePath}`)
+      } else {
+        resolve(exePath)
+      }
+    }).then(gameExePath => {
 
-    console.log(`Executing ${exePath} ${args}`)
-    spawn(exePath, args, {
-      detached: true
-    })
+      const winhttpSource = join(modsPath, 'ModLoader', 'winhttp.dll')
+      const winhttpDestination = join(gameExePath, '../winhttp.dll')
+      if (!existsSync(winhttpDestination)) {
+        copyFileSync(winhttpSource, winhttpDestination)
+      }
 
-    if (autoClose) {
+      const modloaderPath = join(modsPath, 'ModLoader', 'OriDeModLoader.dll')
+
+      let args = [
+        "--doorstop-enabled", "true",
+        "--doorstop-target-assembly", modloaderPath.replace(" ", "\\ ")
+      ]
+
+      if (debug) {
+        args.push('--debug')
+      }
+
+      if (!usingSteam) {
+        console.log(`Executing ${exePath} ${args}`)
+        spawn(gameExePath, args, {
+          detached: true
+        })
+      } else {
+        spawn('explorer', [`steam://run/387290//${args.join(' ')}/`], {
+          detached: true
+        })
+      }
+
+      if (autoClose) {
         app.quit()
-    }
+      }
+
+    }).catch(err => {
+      console.log(err)
+    })
 
     return;
   }

@@ -1,7 +1,7 @@
 {
   "name": "ori-bf-mod-manager",
   "displayName": "Ori and the Blind Forest Mod Manager",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Mod manager for Ori and the Blind Forest Definitive Edition",
   "main": "./out/main/index.js",
   "author": "Kirefel",
@@ -25,7 +25,8 @@
     "electron-updater": "^5.3.0",
     "quasar": "^2.11.5",
     "tmp": "^0.2.1",
-    "vuex": "^4.1.0"
+    "vuex": "^4.1.0",
+    "winreg": "^1.2.4"
   },
   "devDependencies": {
     "@electron/notarize": "^1.2.3",
