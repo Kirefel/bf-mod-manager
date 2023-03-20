@@ -22,6 +22,8 @@
       <q-input v-model="modsSource" label="Mods Source" spellcheck="false" />
       <q-checkbox v-model="autoClose" label="Automatically close after launching game" />
       <q-space />
+      <q-checkbox v-model="doorstop" label="Use Doorstop instead of MInject" />
+      <q-space />
       <q-checkbox v-model="debugMode" label="Debug mode" />
     </q-card-section>
   </q-card>
@@ -56,6 +58,10 @@ export default {
     autoClose: {
       get() { return this.$store.state.settings.autoClose },
       set(value) { this.$store.commit('setSetting', { settingName: 'autoClose', value }) }
+    },
+    doorstop: {
+      get() { return this.$store.state.settings.doorstop },
+      set(value) { this.$store.commit('setSetting', { settingName: 'doorstop', value }) }
     }
   },
 

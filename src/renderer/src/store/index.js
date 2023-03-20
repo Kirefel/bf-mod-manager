@@ -9,6 +9,7 @@ export default createStore({
       modsPath: "",
       autoClose: true,
       debugMode: false,
+      doorstop: true,
       modsSource: "https://raw.githubusercontent.com/Kirefel/ori-bf-mod-index/main/mods.json"
     },
     loading: false,

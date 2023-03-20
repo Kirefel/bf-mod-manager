@@ -2,11 +2,11 @@ import { app, shell, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { createWriteStream, existsSync, readFile, writeFile, rmSync } from 'fs'
+import { createWriteStream, existsSync, readFile, writeFile, rmSync, copyFileSync } from 'fs'
 import decompress from 'decompress'
 import { get } from 'https'
 import { autoUpdater } from 'electron-updater'
-import { execFile } from 'child_process'
+import { execFile, spawn } from 'child_process'
 
 function createWindow() {
   // Create the browser window.
@@ -130,7 +130,8 @@ ipcMain.handle('LOAD_SETTINGS', event => {
           modsPath: join(app.getPath('userData'), 'mods'),
           autoClose: true,
           debugMode: false,
-          modsSource: "https://raw.githubusercontent.com/Kirefel/ori-bf-mod-index/main/mods.json"
+          modsSource: "https://raw.githubusercontent.com/Kirefel/ori-bf-mod-index/main/mods.json",
+          doorstop: true
         })
       }
     })
@@ -162,7 +163,45 @@ ipcMain.handle('LOAD_MOD_STATE', (event, path) => {
   })
 })
 
-ipcMain.on('LAUNCH', (event, { exePath, modsPath, autoClose, debug }) => {
+ipcMain.on('LAUNCH', (event, { exePath, modsPath, autoClose, debug, doorstop }) => {
+
+  if (doorstop) {
+    let gamePath = exePath
+
+    if (exePath.startsWith('steam://')) {
+      // get game path from registry
+      return;
+    }
+    
+    const winhttpSource = join(modsPath, 'ModLoader', 'winhttp.dll')
+    const winhttpDestination = join(gamePath, '../winhttp.dll')
+    if (!existsSync(winhttpDestination)) {
+      copyFileSync(winhttpSource, winhttpDestination)
+    }
+
+    const modloaderPath = join(modsPath, 'ModLoader', 'OriDeModLoader.dll')
+
+    let args = [
+      "--doorstop-enabled", "true",
+      "--doorstop-target-assembly", modloaderPath
+    ]
+
+    if (debug) {
+      args.push('--debug')
+    }
+
+    console.log(`Executing ${exePath} ${args}`)
+    spawn(exePath, args, {
+      detached: true
+    })
+
+    if (autoClose) {
+        app.quit()
+    }
+
+    return;
+  }
+
   const injectorExe = join(modsPath, 'ModLoader', 'Injector.exe')
 
   let args = [ exePath ]
